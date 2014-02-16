@@ -1,0 +1,39 @@
+{
+  "start" : "2014-02-14T04:44:32.537+0000",
+  "finish" : "2014-02-14T04:50:15.751+0000",
+  "data" : 
+          [ 
+      {
+    "client" : {
+      "instanceType" : "t1.micro",
+      "instanceCount" : 2,
+      "requestBySecond" : 21.25,
+      "avgResponseTimeMs" : 6125.5,
+      "country" : "MEXICO"
+    },
+    "server" : {
+      "instanceType" : "t1.micro",
+      "instanceCount" : 1,
+      "requestBySecond" : 0.0,
+      "avgResponseTimeMs" : 0.0,
+      "country" : "SPAIN"
+    }},
+      {
+    "client" : {
+      "instanceType" : "t1.micro",
+      "instanceCount" : 4,
+      "requestBySecond" : 21.25,
+      "avgResponseTimeMs" : 6125.5,
+      "country" : "MEXICO"
+    },
+    "server" : {
+      "instanceType" : "t1.micro",
+      "instanceCount" : 3,
+      "requestBySecond" : 0.0,
+      "avgResponseTimeMs" : 0.0,
+      "country" : "UNITED STATES"
+    }
+  } 
+  
+  ]
+}

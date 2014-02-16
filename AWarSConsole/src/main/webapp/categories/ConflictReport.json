@@ -1,0 +1,23 @@
+{
+    "start" : "2007-11-03T16:18:00Z",
+    "finish": "2007-11-03T16:18:20Z",
+    "data" : 
+    [
+        {
+            "client": {
+                "country": "Jamaica",
+                "instanceType": "m1.small",
+                "instanceCount": 1,
+                "requestBySecond": 1000,
+                "avgResponseTimeMs": 250
+            },
+            "server": {
+                "country": "Tunisia",
+                "instanceType": "m1.small",
+                "instanceCount": 10,
+                "requestBySecond": 3000,
+                "avgResponseTimeMs": 30
+            }
+        }
+    ]
+}
