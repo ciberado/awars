@@ -18,7 +18,7 @@ public class MetricsServiceImplHttp implements Serializable {
     
     private final String appName;
     private final String metricsServerURL;
-    private Client client;
+    private final Client client;
     private boolean keepRunning;
     
     
@@ -28,7 +28,8 @@ public class MetricsServiceImplHttp implements Serializable {
     private final String instanceType;
     private int requestCount;
     private Date startTimestamp;
-    private SynchronizedDescriptiveStatistics responseTimeInMsStats;
+    
+    private final SynchronizedDescriptiveStatistics responseTimeInMsStats;
 
     public MetricsServiceImplHttp(String appName, String metricsServerURL, String optionalWarId, String optionalOpponentWarId) {
         client = ClientBuilder.newClient();

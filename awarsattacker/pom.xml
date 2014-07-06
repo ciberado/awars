@@ -2,12 +2,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.javiermoreno.awsdemos</groupId>
-    <artifactId>AWarSConsole</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
+    <groupId>com.javiermoreno.guiamultimedia</groupId>
+    <artifactId>awarsattacker</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
     <packaging>war</packaging>
 
-    <name>AWarS Console</name>
+    <name>AWarS Web Attacker</name>
 
     <properties>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
@@ -35,6 +35,11 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
             <version>4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.javiermoreno.awsdemos</groupId>
+            <artifactId>attacker</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>javax</groupId>

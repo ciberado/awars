@@ -23,21 +23,14 @@ function loadWorldPins(callback) {
 
 function loadContentData(callback) {
     var filePath = "/awarsconsole/api/metrics/report";
-    //var filePath = "categories/ConflictReportReal.json";
     filePath = encodeURI(filePath);
  
     xhr = new XMLHttpRequest();
     xhr.open('GET', filePath, true);
     xhr.onreadystatechange = function() {
         if (xhr.readyState === 4 && xhr.status === 200) {
+            // global var :/
             conflictReport = JSON.parse(xhr.responseText);
-            // TODO: Check why is this happening and solve it.
-            for (var i=0; i < conflictReport.data.length; i++) {
-                conflictReport.data[i].server.requestBySecond =
-                    conflictReport.data[i].client.requestBySecond;
-                conflictReport.data[i].server.avgResponseTimeMs =
-                    conflictReport.data[i].client.avgResponseTimeMs;
-            }
             if (callback)
                 callback();
             console.log("finished read data file");

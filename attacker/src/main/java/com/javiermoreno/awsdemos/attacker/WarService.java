@@ -6,7 +6,6 @@
 
 package com.javiermoreno.awsdemos.attacker;
 
-import com.javiermoreno.awsdemos.awarscommon.MetricsServiceImplHttp;
 import java.util.Date;
 
 /**
@@ -14,14 +13,18 @@ import java.util.Date;
  * @author ciberado
  */
 public interface WarService {
-
-    void setMetricsService(MetricsServiceImplHttp metricsService);
     
     void addListener(WarServiceListener ls);
 
-    void attack(int threads) throws InterruptedException;
+    void attack();
 
-    String getAttackedWarName();
+    String getDefenderWarId();
+
+    int getDesiredThreadNumber();
+    
+    void setDesiredThreadNumber(int n);
+    
+    long getLastLatencyMs();
     
     class RequestCompletedEvent {
 

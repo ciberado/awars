@@ -1,0 +1,50 @@
+Consola
+===================================================================================
+
+Ver informes:
+>curl -X GET http://ec2-54-91-0-81.compute-1.amazonaws.com/awarsconsole/api/metrics/report
+
+Lectura:
+
+Línea roja: atacante
+Línea azul: defensor
+            Número de partículas <- instancias
+            Tamaño de la partícula <- ECU (ecu*instancias*150) 
+            Velocidad de la partícula <- peticiones por segundo (pps/80) 
+
+
+Defender
+===================================================================================
+
+Obtener Identidad:
+
+>curl -X GET http://ec2-54-86-239-76.compute-1.amazonaws.com/defender/api/identity
+
+Calcular PI: 
+
+>curl -X GET http://localhost:8081/defender/api/mathematics/pi?attackerWarId=SPAIN
+
+Attacker
+===================================================================================
+
+Ataques iniciados:
+
+>curl -X GET http://ec2-54-227-74-163.compute-1.amazonaws.com/awarsattacker/api/conflicts
+
+Registrar Argentina a localhost:8081:
+
+>curl -X POST http://ec2-54-227-74-163.compute-1.amazonaws.com/awarsattacker/api/defenders/MEXICO?publicdns=<TU_ELB_DNS>
+
+Registrar Argentina en elb:
+
+>curl -X POST http://ec2-54-227-74-163.compute-1.amazonaws.com/awarsattacker/api/defenders/ARGENTINA?publicdns=defelb-527088236.us-east-1.elb.amazonaws.com
+
+
+
+Atacar argentina desde españa:
+
+>curl -X POST  http://ec2-54-227-74-163.compute-1.amazonaws.com/awarsattacker/api/attackers/MEXICO/vs/ARGENTINA?desiredNumberOfThreads=2
+
+Cancelar ataque:
+
+>curl -X DELETE  http://ec2-54-226-82-92.compute-1.amazonaws.com/awarsattacker/api/attackers/SPAIN/vs/ARGENTINA

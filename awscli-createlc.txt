@@ -1,0 +1,8 @@
+# Bitnami AMIs: https://bitnami.com/cloud/bitnami-applications-in-the-cloud
+
+#Test:
+#aws ec2 describe-instances --region us-east-1
+
+#Previo: nano userdata-defender.sh
+
+aws autoscaling create-launch-configuration --launch-configuration-name defenderslc2 --image-id ami-48658f20 --security-groups sg-473f4b22 --instance-monitoring Enabled=true --user-data file://userdata-defender.sh --instance-type t1.micro --associate-public-ip-address --region us-east-1 

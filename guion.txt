@@ -1,0 +1,48 @@
+
+    Presentación de AWS
+    Servicios EC2
+    VPC
+    Subnets
+    Conceptos básicos de virtualización, tipos de instancia, ciclo de vida...
+    Amazon Machine Images
+    Creación de AMIs personalizadas, personalización vs flexibilidad...
+    Escalabilidad vertical
+    Diferencias de rendimiento, ventajas, outages, precios...
+    Escalabilidad horizontal
+    Caso de éxito: Animoto
+    Break
+    IAM Roles
+    Instancias con aws cli 
+    Launch configuration
+    Crearemos una plantilla para lanzar las instancias para iniciar la batalla
+    Autoscaling groups
+    Definiremos cuántas máquinas compondrán nuestra flota 
+    Elastic Load Balancers
+    Explicaremos cómo poder acceder a todas sus máquinas desde una única dirección.
+    Break 
+    Autoscaling policies
+    Discutiremos qué métricas son útiles en este escenario y qué umbrales escoger.
+    Pruebas de carga
+    Veremos cómo evoluciona nuestra flota cuando la ponemos en acción y cómo utilizar AWS para testear cargas.
+    ¡Fight!
+    Veremos una configuración contra otra y que coste económico tiene cada elección + Debate
+
+    
+    
+    Instalar aws tools:
+    
+    $> sudo add-apt-repository ppa:fkrull/deadsnakes
+    $> sudo apt-get update
+    $> sudo apt-get install python2.6 python2.6-dev 
+    $> sudo wget https://bootstrap.pypa.io/get-pip.py
+    $> sudo python get-pip.py
+    $> sudo pip install awscli
+    
+    
+    
+    
+    
+    
+    
+    
+    

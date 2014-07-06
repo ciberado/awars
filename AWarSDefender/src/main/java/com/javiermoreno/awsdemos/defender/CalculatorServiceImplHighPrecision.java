@@ -19,7 +19,7 @@ import java.util.Date;
  */
 public class CalculatorServiceImplHighPrecision implements CalculatorService {
 
-    private static final int ITERATIONS = 200; // 500 itertions for 196 correct digits.
+    private static final int ITERATIONS = 100; // 500 itertions for 196 correct digits.
 
     @Override
     public BigDecimal calculatePI() {

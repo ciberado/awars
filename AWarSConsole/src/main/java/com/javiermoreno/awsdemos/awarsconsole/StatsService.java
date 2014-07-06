@@ -15,9 +15,8 @@ import java.util.Map;
  */
 public interface StatsService {
 
-    void updateConflictStats(String warId, String opponentWarId, String appName, 
-                             String instanceId, String instanceType, long start, 
-                             long end, int requestCount, double avgResponseTimeMs);
+    void updateConflictStats(String warId, String opponentWarId, 
+                             String instanceId, String instanceType, double requestPerSecond);
 
     Map<String, ConflictStats> getConflictStats();
 

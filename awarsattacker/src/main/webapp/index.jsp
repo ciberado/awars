@@ -5,13 +5,9 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Defender</title>
+        <title>JSP Page</title>
     </head>
     <body>
-        <h1>Defender hello world!</h1>
-        <p>
-            Click <a href="api/mathematics/pi">here</a>
-            to check the web service.
-        </p>
+        <h1>Hello World!</h1>
     </body>
 </html>

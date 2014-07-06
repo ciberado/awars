@@ -6,21 +6,20 @@
 
 package com.javiermoreno.awsdemos.awarscommon;
 
-import java.io.Serializable;
-
 /**
  *
  * @author ciberado
  */
-public class IdentityDTO implements Serializable {
-    private static final long serialVersionUID = 1;
-    private String warId;
+public class IdentityDTO {
+    String warId;
+    String instanceId;
 
     public IdentityDTO() {
     }
 
-    public IdentityDTO(String warId) {
+    public IdentityDTO(String warId, String instanceId) {
         this.warId = warId;
+        this.instanceId = instanceId;
     }
 
     public String getWarId() {
@@ -29,6 +28,14 @@ public class IdentityDTO implements Serializable {
 
     public void setWarId(String warId) {
         this.warId = warId;
+    }
+
+    public String getInstanceId() {
+        return instanceId;
+    }
+
+    public void setInstanceId(String instanceId) {
+        this.instanceId = instanceId;
     }
     
     

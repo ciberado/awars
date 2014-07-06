@@ -256,13 +256,13 @@ function initScene() {
 	rotating.add( sphere );	
 	
 	// Adds countries in the report to the selectable countries list
-	for (var i=0; i < conflictReport.data.length; i++) {
-		var exporterName = conflictReport.data[i].client.country.toUpperCase();
-		var importerName = conflictReport.data[i].server.country.toUpperCase();
-		if( $.inArray(exporterName, selectableCountries) < 0 )
-			selectableCountries.push( exporterName );
-		if( $.inArray(importerName, selectableCountries) < 0 )
-			selectableCountries.push( importerName );
+	for (var i=0; i < conflictReport.length; i++) {
+		var attacker = conflictReport[i].attacker.toUpperCase();
+		var defender = conflictReport[i].defender.toUpperCase();
+		if( $.inArray(attacker, selectableCountries) < 0 )
+			selectableCountries.push( attacker );
+		if( $.inArray(defender, selectableCountries) < 0 )
+			selectableCountries.push( defender );
 	}
 
 

@@ -1,0 +1,19 @@
+* Arrancar console
+
+* Crear vpc with single public subnet: 10.0.0.0/16, "Defender vpc", 10.0.0.0/24, AZ a, "Public subnet A"
+* Agregar public subnet: 10.0.1.0/16, AZ b, "Public subnet B", **modificar la tabla de rutas para que sea pública!!!**
+
+* Crear un load balancer en Defender vpc, "defenderelb", path /, 80->8080, inteval 15, unhealthy 10, healthy 2, subnets a y b, 
+  tip: un unhealthy de 2 hará que fracase al arrancar debido al tiempo que necesita tomcat para inicializarse
+* Crear un autoscaling group
+
+    - Crear un Security Group para VPC: "Web VPC SG", Defender vpc. Inbound 80 y 22, Outbound all.
+    - Launch configuration: bitnami tomcat, Defender LC, Detailed monitoring (!!!!), User data, Assign public ip,  Web VPC sg, key pair.
+    - Autoscaling group: Defender ASG, Network, Subnets A y B, Receive from ELB, HeatlhCheck ELB (30s), Detailed monitoring
+    - Autoscaling policies: desactivadas para impedir boot chain reaction
+    - Revisar email y confirmar suscripciones.
+    - Revisar consola ec2
+    
+*   - Min & Max: 2 & 6
+    - Autoscaling policies: Alarm (create topic, avg cpu 80% 1m), +2 instances, cooldown 180s
+                            Alarm (topic, avg < 20% 1m), -2 instance, cooldown 60s

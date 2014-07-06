@@ -1,26 +1,25 @@
 var globeRadius = 1000;
 var vec3_origin = new THREE.Vector3(0,0,0);
 
-function makeConnectionLineGeometry( exporterCountry, importerCountry, conflictPage, /* 'importer' || 'exporter' */lineRole ){
-	if( exporterCountry.countryName == undefined || importerCountry.countryName == undefined ) {
+function makeConnectionLineGeometry( startCountry, endCountry, heightFactor ){
+	if( startCountry.countryName == undefined || endCountry.countryName == undefined ) {
 		console.warn('makeConnectionLineGeometry failed due to lack of data.')
 		return undefined;
 	}
 	
-	var distanceBetweenCountryCenter = exporterCountry.center.clone().subSelf(importerCountry.center).length();		
-	var heightFactor =  (lineRole == 'exporter' ? 0.6 : 0.5);
+	var distanceBetweenCountryCenter = startCountry.center.clone().subSelf(endCountry.center).length();		
 	//	how high we want to shoot the curve upwards
 	var anchorHeight = globeRadius + distanceBetweenCountryCenter * heightFactor;
 
 	//	start of the line
-	var start = lineRole == 'exporter' ? exporterCountry.center : importerCountry.center;
+	var start =  startCountry.center;
 
 	//	end of the line
-	var end = lineRole == 'exporter' ? importerCountry.center : exporterCountry.center;
+	var end = endCountry.center;
 	
 	//	midpoint for the curve
 	var mid = start.clone().lerpSelf(end,0.5);		
-	var midLength = mid.length()
+	var midLength = mid.length();
 	mid.normalize();
 	mid.multiplyScalar( midLength + distanceBetweenCountryCenter * heightFactor );	
 

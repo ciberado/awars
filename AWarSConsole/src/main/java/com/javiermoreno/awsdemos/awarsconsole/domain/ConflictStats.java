@@ -7,8 +7,8 @@
 package com.javiermoreno.awsdemos.awarsconsole.domain;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Map;
+import org.apache.commons.collections4.map.PassiveExpiringMap;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
@@ -19,37 +19,23 @@ public class ConflictStats implements Serializable {
     private static final long serialVersionUID = 1;
     
     private String attackerName;
-    private String defenderName;
-    private long startTimestamp;
-    private long endTimestamp;
-    
-    @JsonProperty("applicationStats")
-    private Map<String, ApplicationStats> appStats = new HashMap<String, ApplicationStats>();
+    private String defenderName; 
+
+    @JsonProperty("machines")
+    private Map<String, MachineStats> machineStats = new PassiveExpiringMap<String, MachineStats>(1000*60);
 
     public ConflictStats(String attacker, String defender) {
         this.attackerName = attacker;
         this.defenderName = defender;
-        this.startTimestamp = Long.MAX_VALUE;
-        this.endTimestamp = 0;
     }
 
-    public void updateApplicationStats(String appName, String warId, String opponentWarId, String instanceId, String instanceType,
-                                       long startTimestamp, long endTimestamp, int requestCount, double avgResponseTimeMs) {
-        if (this.startTimestamp > startTimestamp) {
-            this.startTimestamp = startTimestamp;
-        }
-        if (this.endTimestamp < endTimestamp) {
-            this.endTimestamp = endTimestamp;
-        }
-        
-        ApplicationStats appStats = this.appStats.get(appName);
-        if (appStats == null) {
-            appStats = new ApplicationStats();
-            appStats.setId(appName);
-            this.appStats.put(appName, appStats);
-        }
-        appStats.updateWarriorStats(warId, instanceId, instanceType, 
-                                    startTimestamp, endTimestamp, requestCount, avgResponseTimeMs);
+    public void updateStats(String instanceId, String instanceType, double requestPerSecond) {
+        String appName = "Defender";
+        MachineStats stats = new MachineStats();
+        stats.setId(instanceId);
+        stats.setType(instanceType);
+        stats.setRequestPerSecond(requestPerSecond);
+        machineStats.put(instanceId, stats);
     }
 
     public String getAttackerName() {
@@ -68,21 +54,28 @@ public class ConflictStats implements Serializable {
         this.defenderName = defenderName;
     }
 
-    public long getStartTimestamp() {
-        return startTimestamp;
+    public Map<String, MachineStats> getMachineStats() {
+        return machineStats;
     }
 
-    public long getEndTimestamp() {
-        return endTimestamp;
+    public int getMachinesCount() {
+        return machineStats.size();
     }
-
     
-
-    public Map<String, ApplicationStats> getAppStats() {
-        return appStats;
+    public String getMachinesType() {
+        if (machineStats.size() == 0) {
+            return null;
+        } else {
+            return machineStats.values().iterator().next().getType();
+        }
     }
-
     
-    
+    public double getTotalRequestPerSecond() {
+        double sum = 0;
+        for (MachineStats machineStats : machineStats.values()) {
+            sum = sum + machineStats.getRequestPerSecond();
+        }
+        return sum;
+    }
     
 }

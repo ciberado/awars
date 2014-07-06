@@ -6,6 +6,7 @@
 
 package com.javiermoreno.awsdemos.defender;
 
+import java.math.BigDecimal;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -23,7 +24,8 @@ public class CalculatorController {
     @Path("/pi")
     @Produces("application/json; charset=utf-8")
     public PIResponseDTO calculatePI() {
-        PIResponseDTO dto = new PIResponseDTO(service.calculatePI());
+        BigDecimal calculatePI = service.calculatePI();
+        PIResponseDTO dto = new PIResponseDTO(calculatePI);
         return dto;
     }
     

@@ -1,6 +1,5 @@
 package com.javiermoreno.awsdemos.attacker;
 
-import com.javiermoreno.awsdemos.awarscommon.MetricsServiceImplHttp;
 import java.util.Date;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -15,17 +14,13 @@ public class App {
     
     private final String server;
     private final int serverPort;
-    private final String metricsServer;
-    private final int metricsServerPort;
     private final String warId;
-    private String attackedWarId;
+    private String defenderWarId;
     private final int threads;
 
-    public App(String server, int serverPort, String metricsServer, int metricsServerPort, String warId, int threads) {
+    public App(String server, int serverPort, String warId, int threads) {
         this.server = server;
         this.serverPort = serverPort;
-        this.metricsServer = metricsServer;
-        this.metricsServerPort = metricsServerPort;
         this.warId = warId;
         this.threads = threads;
     }
@@ -33,23 +28,19 @@ public class App {
     
     public void execute() throws InterruptedException {
             cls();
-            String metricsServerUrl = "http://" + metricsServer + ":" + metricsServerPort + "/awarsconsole/api";
             println("Starting the fight.");
             println("War ID: %s.", warId);
             println("Attacked server: %s.", server);
-            println("Metrics server: %s.", metricsServer);
             println("Number of concurrent threads: %d.", threads);
             WarService warService = new WarServiceImpl(warId, server, serverPort);
-            this.attackedWarId = warService.getAttackedWarName();
-            println("Opponent War ID: %s.", this.attackedWarId);
-            MetricsServiceImplHttp metricsService = new MetricsServiceImplHttp(APP_ID, metricsServerUrl, warId, this.attackedWarId);
-            warService.setMetricsService(metricsService);
+            this.defenderWarId = warService.getDefenderWarId();
+            println("Opponent War ID: %s.", this.defenderWarId);
             warService.addListener(new WarService.WarServiceListener() {
                 public void requestCompleted(WarService.RequestCompletedEvent evt) {
                     showRequestCompletedMessage(evt.getTimestamp(), evt.getStatus(), evt.getResponseTimeMs());
                 }
             });
-            warService.attack(threads);
+            warService.attack();
     }
     
 
@@ -85,11 +76,9 @@ public class App {
                 CommandLine line = parser.parse(createCliOptions(), args);
                 String server = line.getOptionValue("server");
                 int serverPort = Integer.parseInt(line.getOptionValue("port", "80"));
-                String metricsServer = line.getOptionValue("metrics-server", "awars.javier-moreno.com");
-                int metricsServerPort = Integer.parseInt(line.getOptionValue("metrics-port", "80"));
                 String warId = line.getOptionValue("war-id");
                 int threads = Integer.parseInt(line.getOptionValue("threads"));
-                App app = new App(server, serverPort, metricsServer, metricsServerPort, warId, threads);
+                App app = new App(server, serverPort, warId, threads);
                 app.execute();
             }
         } catch (ParseException ex) {
@@ -108,8 +97,6 @@ public class App {
         
         options.addOption("s", "server", true, "Attacked server address");
         options.addOption("p", "port", true, "Attacked server port");
-        options.addOption("M", "metrics-server", true, "Metrics server address");
-        options.addOption("P", "metrics-port", true, "Metrics server port");
         options.addOption("i", "war-id", true, "Name of the attacker");
         options.addOption("t", "threads", true, "Number of threads.");
         

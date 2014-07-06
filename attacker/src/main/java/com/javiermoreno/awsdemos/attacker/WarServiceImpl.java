@@ -1,11 +1,12 @@
 package com.javiermoreno.awsdemos.attacker;
 
 import com.javiermoreno.awsdemos.awarscommon.IdentityDTO;
-import com.javiermoreno.awsdemos.awarscommon.MetricsServiceImplHttp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ws.rs.client.AsyncInvoker;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -16,58 +17,74 @@ import javax.ws.rs.core.Response;
  *
  * @author ciberado
  */
-class WarServiceImpl implements WarService {
+public class WarServiceImpl implements WarService {
 
     private static final String DEFENDER_BUSINESS_URL = "http://{server}:{port}/defender/api/mathematics/pi";
     private static final String DEFENDER_ID_URL = "http://{server}:{port}/defender/api/identity";
     private List<WarServiceListener> listeners = new ArrayList<WarServiceListener>();
 
-    private MetricsServiceImplHttp metricsService;
     private String warId;
     private String server;
     private int serverPort;
-    private String attackedWarName;
+    private String defenderWarId;
 
     private Client attackClient;
-    
-    private BlockingQueue<AsyncInvoker> invokers = new LinkedBlockingQueue<AsyncInvoker>();
+
+    private BlockingQueue<AsyncInvoker> waitingInvokers = new LinkedBlockingQueue<AsyncInvoker>();
+    private int processingInvokersNumber;
+    private int desiredThreadNumber;
+    private long lastLatencyMs;
 
     public WarServiceImpl(String warId, String server, int serverPort) {
         this.warId = warId;
         this.server = server;
         this.serverPort = serverPort;
         attackClient = ClientBuilder.newClient();
+        this.desiredThreadNumber = 1;
     }
 
-    public void setMetricsService(MetricsServiceImplHttp metricsService) {
-        this.metricsService = metricsService;
+    public void incrementDesiredNumberOfThreads() {
+        desiredThreadNumber = desiredThreadNumber + 1;
     }
 
-    public String getAttackedWarName() {
-        if (this.attackedWarName == null) {
+    public void desiredThreadNumberOfThreads() {
+        desiredThreadNumber = Math.max(0, desiredThreadNumber - 1);
+    }
+
+    public int getDesiredThreadNumber() {
+        return desiredThreadNumber;
+    }
+
+    public void setDesiredThreadNumber(int desiredThreadNumber) {
+        this.desiredThreadNumber = desiredThreadNumber;
+    }
+
+    public String getDefenderWarId() {
+        if (this.defenderWarId == null) {
             String url = DEFENDER_ID_URL.replace("{server}", server)
-                                        .replace("{port}", String.valueOf(serverPort));
+                    .replace("{port}", String.valueOf(serverPort));
             Client client = ClientBuilder.newClient();
             IdentityDTO response = client.target(url).request().get(IdentityDTO.class);
-            this.attackedWarName = response.getWarId();
+            this.defenderWarId = response.getWarId();
         }
-        return this.attackedWarName;
+        return this.defenderWarId;
     }
-    
-    public void attack(int threads) throws InterruptedException {
-        metricsService.start();
 
-        for (int i=0; i < threads; i++) {
-            createAsyncInvoker();
-        }
-        
-        while (true) {
-            AsyncInvoker invoker = invokers.take();
-            invoker.get(new InvocationCallbackImpl());
-            metricsService.registerNewRequest();
+    public void attack() {
+        try {
+            for (int i = 0; i < desiredThreadNumber; i++) {
+                createAsyncInvoker();
+            }
+            while (desiredThreadNumber > 0) {
+                AsyncInvoker invoker = waitingInvokers.take();
+                processingInvokersNumber = processingInvokersNumber + 1;
+                invoker.get(new InvocationCallbackImpl());
+            }
+        } catch (InterruptedException ex) {
+            Logger.getLogger(WarServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public void addListener(WarServiceListener ls) {
         listeners.add(ls);
     }
@@ -81,16 +98,21 @@ class WarServiceImpl implements WarService {
 
     private void createAsyncInvoker() {
         String url = DEFENDER_BUSINESS_URL.replace("{server}", server)
-                                          .replace("{port}", String.valueOf(serverPort));
+                .replace("{port}", String.valueOf(serverPort));
         AsyncInvoker invoker = attackClient.target(url)
-                                           .queryParam("warId", warId)
-                                           .queryParam("attackedWarName", attackedWarName)
-                                           .request()
-                                           .async();
-        invokers.add(invoker);
+                .queryParam("attackerWarId", warId)
+                .queryParam("defenderWarId", defenderWarId)
+                .request()
+                .async();
+        waitingInvokers.add(invoker);
     }
 
+    public long getLastLatencyMs() {
+        return lastLatencyMs;
+    }
+    
     private class InvocationCallbackImpl implements InvocationCallback<Response> {
+
         private long t0;
 
         public InvocationCallbackImpl() {
@@ -98,15 +120,16 @@ class WarServiceImpl implements WarService {
         }
 
         public void completed(Response res) {
-            long tf = System.currentTimeMillis();            
-            metricsService.registerResponseTimeInMs(tf-t0);
-            fireRequestCompletedEvent(res.getStatus(), tf -t0);
+            processingInvokersNumber = processingInvokersNumber - 1;
+            long tf = System.currentTimeMillis();
+            fireRequestCompletedEvent(res.getStatus(), tf - t0);
+            lastLatencyMs = tf-t0;
             createAsyncInvoker();
         }
 
         public void failed(Throwable thrwbl) {
-            System.err.println("LOG: " + thrwbl.getMessage());
-            thrwbl.printStackTrace(System.err);
+            processingInvokersNumber = processingInvokersNumber - 1;
+            System.err.println("LOG (" + server + "): " + thrwbl.getMessage());
             createAsyncInvoker();
         }
     }

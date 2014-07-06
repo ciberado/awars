@@ -6,7 +6,6 @@
 
 package com.javiermoreno.awsdemos.awarsconsole;
 
-import com.javiermoreno.awsdemos.awarsconsole.domain.ApplicationStats;
 import com.javiermoreno.awsdemos.awarsconsole.domain.ConflictStats;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,20 +19,17 @@ public class StatsServiceImplMem implements StatsService {
     private Map<String, ConflictStats> stats = new HashMap<String, ConflictStats>();
 
     @Override
-    public void updateConflictStats(String warId, String opponentWarId, String appName, 
-                                    String instanceId, String instanceType, 
-                                    long start, long end, int requestCount, double avgResponseTimeMs) {
-        String attacker = "server".equalsIgnoreCase(appName) ? opponentWarId : warId;
-        String defender = "server".equalsIgnoreCase(appName) ? warId : opponentWarId;
+    public void updateConflictStats(String warId, String opponentWarId,  
+                                    String instanceId, String instanceType, double requestPerSecond) {
+        String attacker = opponentWarId;
+        String defender = warId;
         String conflictName = attacker + "_" + defender;
         ConflictStats conflictStats = stats.get(conflictName);
         if (conflictStats == null) {
             conflictStats = new ConflictStats(attacker, defender);
             stats.put(conflictName, conflictStats);
         }
-        conflictStats.updateApplicationStats(appName, warId, opponentWarId, 
-                                             instanceId, instanceType, start, end, 
-                                             requestCount, avgResponseTimeMs);
+        conflictStats.updateStats(instanceId, instanceType, requestPerSecond);
         System.out.println("LOG: Stats size: " + stats.size());
     }
     

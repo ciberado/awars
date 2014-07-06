@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package com.javiermoreno.awsdemos.awarsconsole.domain;
 
 import java.io.Serializable;
@@ -20,9 +14,7 @@ public class MachineStats implements Serializable {
     @JsonIgnore
     private String id;
     private String type;
-    private long lastLectureTimestamp;
-    private double lastAvgResponseTimeMs;
-    private double lastRequestCountPerSecond;
+    private double requestPerSecond;
 
     public MachineStats() {
     }
@@ -43,28 +35,12 @@ public class MachineStats implements Serializable {
         this.type = type;
     }
 
-    public long getLastLectureTimestamp() {
-        return lastLectureTimestamp;
+    public double getRequestPerSecond() {
+        return requestPerSecond;
     }
 
-    public void setLastLectureTimestamp(long lastLectureTimestamp) {
-        this.lastLectureTimestamp = lastLectureTimestamp;
-    }
-
-    public double getLastAvgResponseTimeMs() {
-        return lastAvgResponseTimeMs;
-    }
-
-    public void setLastAvgResponseTimeMs(double lastAvgResponseTimeMs) {
-        this.lastAvgResponseTimeMs = lastAvgResponseTimeMs;
-    }
-
-    public double getLastRequestCountPerSecond() {
-        return lastRequestCountPerSecond;
-    }
-
-    public void setLastRequestCountPerSecond(double lastRequestCountPerSecond) {
-        this.lastRequestCountPerSecond = lastRequestCountPerSecond;
+    public void setRequestPerSecond(double requestPerSecond) {
+        this.requestPerSecond = requestPerSecond;
     }
 
     @Override
@@ -91,8 +67,9 @@ public class MachineStats implements Serializable {
 
     @Override
     public String toString() {
-        return "MachineStats{" + "id=" + id + ", type=" + type + ", lastLectureTimestamp=" + lastLectureTimestamp + ", lastAvgResponseTimeMs=" + lastAvgResponseTimeMs + ", lastRequestCountPerSecond=" + lastRequestCountPerSecond + '}';
+        return "MachineStats{" + "id=" + id + ", type=" + type + ", requestPerSecond=" + requestPerSecond + '}';
     }
+
     
     
 }

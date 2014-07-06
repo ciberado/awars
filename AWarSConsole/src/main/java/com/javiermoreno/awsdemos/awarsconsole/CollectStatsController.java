@@ -1,17 +1,14 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package com.javiermoreno.awsdemos.awarsconsole;
 
 import com.javiermoreno.awsdemos.awarsconsole.domain.ConflictStats;
-import com.javiermoreno.awsdemos.awarsconsole.dto.ConflictsReportDTO;
+import com.javiermoreno.awsdemos.awarsconsole.dto.ConflictDTO;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.inject.Singleton;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -38,23 +35,19 @@ public class CollectStatsController {
         return Response.ok(responseData).build();
     }
 
-    @GET /* TODO: Pásalo a post. */
-    @Path("/applications/{appName}/customers/{warId}/instances/{instanceId}")
+    @POST 
+    @Path("/defenders/{defenderWarId}/instances/{instanceId}")
     @Produces("application/json; charset=utf-8")
-    public Response registerNewStat(@PathParam("appName") String appName,
-                                    @PathParam("warId") String warId, 
+    public Response registerNewStat(@PathParam("defenderWarId") String defenderWarId, 
                                     @PathParam("instanceId") String instanceId,
-                                    @QueryParam("opponentWarId") String opponentWarId,
+                                    @QueryParam("attackerWarId") String attackerWarId,
                                     @QueryParam("instanceType") String instanceType,
-                                    @QueryParam("startTimestamp")  long start,
-                                    @QueryParam("endTimestamp") long end,
-                                    @QueryParam("requestCount") int requestCount,
-                                    @QueryParam("avgResponseTimeMs") int avgResponseTimeMs) {
-        service.updateConflictStats(warId, opponentWarId, appName, instanceId, instanceType, 
-                                    start, end, requestCount, avgResponseTimeMs);
+                                    @QueryParam("requestPerSecond") double requestPerSecond) {
+        service.updateConflictStats(defenderWarId, attackerWarId, instanceId, instanceType, requestPerSecond);
         return Response.ok().build();
     }
     
+    /*
     @GET 
     @Path("/conflicts")
     @Produces("application/json; charset=utf-8")
@@ -63,17 +56,20 @@ public class CollectStatsController {
         
         return Response.ok(stats).build();
     }
+    */
     
     @GET 
     @Path("/report")
     @Produces("application/json; charset=utf-8")
     public Response getReports() {
-        Map<String, ConflictStats> conflictStats = service.getConflictStats();
-        ConflictsReportDTO dto = new ConflictsReportDTO();
-        for (ConflictStats currentConflictStats : conflictStats.values()) {
-            dto.addConflictDTO(currentConflictStats);
+        List<ConflictDTO> conflictsDTO = new ArrayList<ConflictDTO>();
+        for (ConflictStats currentConflictStats : service.getConflictStats().values()) {
+            ConflictDTO dto = new ConflictDTO(currentConflictStats);
+            if (dto.getMachinesCount() > 0) {
+                conflictsDTO.add(dto);
+            }
         }
-        return Response.ok(dto).build();
+        return Response.ok(conflictsDTO).build();
     }
     
 }
